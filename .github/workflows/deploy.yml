@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup Java
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+    
+    - name: Compile Java
+      run: javac SimpleServer.java
+    
+    - name: Create index.html
+      run: |
+        echo '<h1>PHASEZERO Catalog Service</h1>' > index.html
+        echo '<p>API Endpoints:</p>' >> index.html
+        echo '<ul>' >> index.html
+        echo '<li>POST /products - Create product</li>' >> index.html
+        echo '<li>GET /products - List all products</li>' >> index.html
+        echo '<li>GET /products?name=filter - Search products</li>' >> index.html
+        echo '<li>GET /products/category/Parts - Filter by category</li>' >> index.html
+        echo '<li>GET /products/sorted - Sort by price</li>' >> index.html
+        echo '<li>GET /products/inventory/value - Total inventory value</li>' >> index.html
+        echo '</ul>' >> index.html
+        echo '<p><a href="https://github.com/Srigokul2004/phasezero-catalog-service">View Source Code</a></p>' >> index.html
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./
